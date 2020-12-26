@@ -41,6 +41,12 @@ func main() {
 	// Read many documents.
 	findMany(client)
 
+	// Delete one document.
+	deleteOne(client)
+
+	// Delete many documents.
+	deleteMany(client)
+
 	err = client.Disconnect(context.TODO())
 
 	if err != nil {

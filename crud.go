@@ -148,3 +148,39 @@ func findMany(c *mongo.Client) {
 
 	fmt.Printf("Found multiple documents (array of pointers): %+v\n", results)
 }
+
+func deleteOne(c *mongo.Client) {
+	collection := c.Database("employees").Collection("devs")
+
+	filter := bson.D{{
+		Key:   "name",
+		Value: "Cat",
+	}}
+
+	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Deleted %v document(s)\n", deleteResult.DeletedCount)
+}
+
+func deleteMany(c *mongo.Client) {
+	collection := c.Database("employees").Collection("devs")
+
+	filter := bson.D{{
+		"name", bson.D{{
+			"$in", bson.A{
+				"Alice",
+				"Bob",
+			},
+		}},
+	}}
+
+	deleteResult, err := collection.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Deleted %v document(s)\n", deleteResult.DeletedCount)
+}
