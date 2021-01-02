@@ -11,6 +11,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//Developer represents a developer.
+type Developer struct {
+	Name      string `bson:"name"`
+	YearsExp  int    `bson:"yearsExperience"`
+	LikesCats bool   `bson:"likesCats"`
+}
+
+
 func createOne(c *mongo.Client) {
 	collection := c.Database("employees").Collection("devs")
 

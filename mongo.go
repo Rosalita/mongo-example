@@ -9,12 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//Developer represents a developer.
-type Developer struct {
-	Name      string `bson:"name"`
-	YearsExp  int    `bson:"yearsExperience"`
-	LikesCats bool   `bson:"likesCats"`
-}
 
 func main() {
 	// create a new mongo client
@@ -26,26 +20,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Create one document
-	createOne(client)
+	// // CRUD operations
+	// // Create one document
+	// createOne(client)
 
-	// Create many documents
-	createMany(client)
+	// // Create many documents
+	// createMany(client)
 
-	// Update one document.
-	updateOne(client)
+	// // Update one document.
+	// updateOne(client)
 
-	// Read a single document.
-	findOne(client)
+	// // Read a single document.
+	// findOne(client)
 
-	// Read many documents.
-	findMany(client)
+	// // Read many documents.
+	// findMany(client)
 
-	// Delete one document.
-	deleteOne(client)
+	// // Delete one document.
+	// deleteOne(client)
 
-	// Delete many documents.
-	deleteMany(client)
+	// // Delete many documents.
+	// deleteMany(client)
+
+
+	// Aggregation Pipeline
+	aggregate(client)
 
 	err = client.Disconnect(context.TODO())
 
