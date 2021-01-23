@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	//	"go.mongodb.org/mongo-driver/bson"
-	//	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 // Graph data can be modelled in Mongo as a tree using the Parent References pattern.
@@ -30,9 +29,57 @@ func graphTree(c *mongo.Client) {
 	collection := c.Database("trees").Collection("godsAndGoddesses")
 
 	fmt.Println(collection)
-	
+
 	// seed some data into the database
 	// seedTreeData(collection)
+
+	// Aggregate Query with Graph Lookup
+	// Get all the ancestors of the descendant known as Death
+
+	// $graphLookup is a recursive search on a collection
+	// options are used to restrict the search
+
+	// Start with a filter which will capture the descendant known as Death
+	filter := bson.M{
+		"knownAs": "Death",
+	}
+
+	// Create an aggregate pipeline
+	pipeline := bson.A{
+		// first step in the pipeline is to match on the filter
+		bson.M{"$match": filter},
+		// This match will return some documents.
+		// The second step is to perform a graph lookup for each matched document.
+		bson.M{"$graphLookup": bson.M{
+			// from the collection godsAndGoddesses - note this collection cannot be sharded.
+			"from": "godsAndGoddesses",
+			// startWith is the starting value, in this example it's the value stored in field parent
+			// for the document(s) identified in the first $match step.
+			// $graphLookup then begins recursively matching
+			// it finds all the document(s) where the starting value is present in the connectToField
+			// In this case this is where the field _id matches the value $parent
+			// for this next round of matches it looks at the value in the connectFromField
+			// if it matches the value in the connectToField it adds the matching document
+			// to an result array, named by the 'as' parameter.
+			// $graphLookup continues matching and building up the result array.
+			// It stops when no more matches are found.
+			"startWith":        "$parent",
+			"connectToField":   "_id",
+			"connectFromField": "parent",
+			"as":               "ancestors",
+		}},
+	}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var result []bson.M
+	if err := cursor.All(context.TODO(), &result); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(result)
 }
 
 func seedTreeData(c *mongo.Collection) {
