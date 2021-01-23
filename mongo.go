@@ -33,7 +33,7 @@ func main() {
 	// findOne(client)
 
 	// // Read many documents.
-	findMany(client)
+	// find(client)
 
 	// // Delete one document.
 	// deleteOne(client)
@@ -43,6 +43,9 @@ func main() {
 
 	// Aggregation Pipeline
 	// aggregate(client)
+
+	// Graph Tree
+	graphTree(client)
 
 	err = client.Disconnect(context.TODO())
 
