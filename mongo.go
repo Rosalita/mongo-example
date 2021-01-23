@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
 func main() {
 	// create a new mongo client
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -34,7 +33,7 @@ func main() {
 	// findOne(client)
 
 	// // Read many documents.
-	// findMany(client)
+	findMany(client)
 
 	// // Delete one document.
 	// deleteOne(client)
@@ -42,9 +41,8 @@ func main() {
 	// // Delete many documents.
 	// deleteMany(client)
 
-
 	// Aggregation Pipeline
-	aggregate(client)
+	// aggregate(client)
 
 	err = client.Disconnect(context.TODO())
 

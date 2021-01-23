@@ -18,7 +18,6 @@ type Developer struct {
 	LikesCats bool   `bson:"likesCats"`
 }
 
-
 func createOne(c *mongo.Client) {
 	collection := c.Database("employees").Collection("devs")
 
@@ -112,7 +111,7 @@ func findOne(c *mongo.Client) {
 	fmt.Printf("Found a single document: %+v\n", result)
 }
 
-func findMany(c *mongo.Client) {
+func find(c *mongo.Client) {
 
 	collection := c.Database("employees").Collection("devs")
 
@@ -121,7 +120,13 @@ func findMany(c *mongo.Client) {
 	findOptions.SetLimit(2)
 
 	// Using an empty bson.D as a filter will match all documents in the collection.
-	filter := bson.D{{}}
+	// filter := bson.D{{}}
+
+	// to find some records with specific names can use $in
+	someNames := []string{"Rosie", "Amy"}
+	filter := bson.M{
+		"name": bson.M{"$in": someNames},
+	}
 
 	// The find method returns a cursor. A cursor provides a stream of documents
 	// that can be iterated over and decoded one at a time.
@@ -154,7 +159,13 @@ func findMany(c *mongo.Client) {
 	// Close the cursor once finished
 	cur.Close(context.TODO())
 
-	fmt.Printf("Found multiple documents (array of pointers): %+v\n", results)
+	if len(results) != 0 {
+		fmt.Printf("Found document(s) (array of pointers): %+v\n", results)
+		for _, result := range results {
+			fmt.Println(*result)
+		}
+	}
+
 }
 
 func deleteOne(c *mongo.Client) {
